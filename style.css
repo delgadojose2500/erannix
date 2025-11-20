@@ -14,18 +14,22 @@
     box-sizing: border-box;
 }
 
+html {
+    height: 100%;
+    overflow: hidden;
+}
+
 body {
     font-family: var(--font-main);
     background: var(--bg-gradient);
     background-size: 400% 400%;
     animation: gradientBG 15s ease infinite;
     color: var(--text-color);
-    min-height: 100vh;
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    /* Allow scrolling if content is taller than screen */
-    overflow-y: auto;
+    overflow: hidden;
     padding: 1rem;
 }
 
