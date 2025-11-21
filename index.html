@@ -14,17 +14,34 @@
 <body>
     <div class="container">
         <div class="card">
-            <div class="image-container">
-                <img id="status-image" src="active.png" alt="Estado del contador">
-            </div>
-            <div class="timer-container">
-                <h1 id="timer">00:00:10</h1>
-                <p class="label">¿Que es esto?ᵃ</p>
+            <div class="card-inner">
+                <!-- Cara Frontal: Contador -->
+                <div class="card-front">
+                    <div class="image-container">
+                        <img id="status-image" src="active.png" alt="Estado del contador">
+                    </div>
+                    <div class="timer-container">
+                        <h1 id="timer">00:00:10</h1>
+                        <p class="label">¿Que es esto?ᵃ</p>
+                    </div>
+                    <button id="play-btn" class="game-btn">🎁 Jugar Flappy Gift</button>
+                </div>
+
+                <!-- Cara Trasera: Juego Flappy Gift -->
+                <div class="card-back">
+                    <h2>Flappy Gift</h2>
+                    <div class="score-board">Puntuación: <span id="score">0</span></div>
+                    <canvas id="game-board" width="300" height="400"></canvas>
+                    <div class="controls">
+                        <button id="start-game-btn" class="game-btn small">Empezar</button>
+                        <button id="back-btn" class="game-btn small outline">Volver</button>
+                    </div>
+                    <p class="instructions">Toca para saltar</p>
+                </div>
             </div>
         </div>
     </div>
     <script src="script.js"></script>
 </body>
-
 
 </html>
