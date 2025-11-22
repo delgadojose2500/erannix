@@ -72,11 +72,75 @@ document.addEventListener('DOMContentLoaded', () => {
         finishCountdown();
     }
 
+    // --- Sistema de Sonido (Web Audio API) ---
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    const sounds = {
+        jump: () => {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.1);
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.1);
+        },
+        score: () => {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+            osc.frequency.setValueAtTime(800, audioCtx.currentTime + 0.1);
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.2);
+        },
+        crash: () => {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(100, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.3);
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.3);
+        },
+        flip: () => {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+            osc.frequency.linearRampToValueAtTime(800, audioCtx.currentTime + 0.2);
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.3);
+        }
+    };
+
     // --- Lógica del Juego Flappy Gift ---
     const card = document.querySelector('.card');
+    const cardBack = document.querySelector('.card-back');
     const playBtn = document.getElementById('play-btn');
     const backBtn = document.getElementById('back-btn');
     const startGameBtn = document.getElementById('start-game-btn');
+    const continueBtn = document.getElementById('continue-btn');
     const canvas = document.getElementById('game-board');
     const ctx = canvas.getContext('2d');
     const scoreElement = document.getElementById('score');
@@ -84,12 +148,81 @@ document.addEventListener('DOMContentLoaded', () => {
     // Voltear tarjeta
     playBtn.addEventListener('click', () => {
         card.classList.add('flipped');
+        if (audioCtx.state === 'suspended') audioCtx.resume(); // Inicializar audio
     });
 
     backBtn.addEventListener('click', () => {
         card.classList.remove('flipped');
         stopGame();
+        // Resetear vista de pista si estaba activa
+        setTimeout(() => {
+            cardBack.classList.remove('reveal-clue');
+            resetBoosterCards();
+        }, 500);
     });
+
+    continueBtn.addEventListener('click', () => {
+        cardBack.classList.remove('reveal-clue');
+        resetBoosterCards();
+        // Opcional: Reiniciar juego o continuar
+        startGame();
+    });
+
+    // Variable para controlar si ya se ha seleccionado una carta
+    let cardSelected = false;
+
+    // Función para voltear cartas booster
+    window.flipCard = function (cardElement) {
+        // Si ya hay una carta seleccionada o esta ya está volteada, no hacer nada
+        if (cardSelected || cardElement.classList.contains('flipped')) return;
+
+        sounds.flip(); // Sonido de volteo
+        cardSelected = true; // Marcar como seleccionado
+
+        // Voltear la carta seleccionada
+        cardElement.classList.add('flipped');
+
+        // Deshabilitar visualmente las otras cartas (opcional, pero queda bien)
+        const allCards = document.querySelectorAll('.booster-card');
+        allCards.forEach(card => {
+            if (card !== cardElement) {
+                card.style.opacity = '0.5';
+                card.style.cursor = 'default';
+            }
+        });
+
+        // Mostrar botón de continuar después de un momento
+        setTimeout(() => {
+            continueBtn.style.opacity = '1';
+            continueBtn.style.pointerEvents = 'auto';
+        }, 800);
+    };
+
+    function resetBoosterCards() {
+        cardSelected = false; // Resetear flag
+        const boosterCards = document.querySelectorAll('.booster-card');
+        boosterCards.forEach(card => {
+            card.classList.remove('flipped');
+            // Restaurar estilos
+            card.style.opacity = '1';
+            card.style.cursor = 'pointer';
+        });
+        continueBtn.style.opacity = '0';
+        continueBtn.style.pointerEvents = 'none';
+
+        // Resetear estilos forzados
+        const gameLayer = document.getElementById('game-layer');
+        const clueLayer = document.getElementById('clue-layer');
+        if (gameLayer) {
+            gameLayer.style.opacity = '';
+            gameLayer.style.pointerEvents = '';
+        }
+        if (clueLayer) {
+            clueLayer.style.opacity = '';
+            clueLayer.style.zIndex = '';
+            clueLayer.style.pointerEvents = '';
+        }
+    }
 
     // Variables del juego
     let bird = { x: 50, y: 150, width: 20, height: 20, velocity: 0, gravity: 0.5, jump: -8 };
@@ -98,6 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let gameInterval;
     let isGameRunning = false;
     let frameCount = 0;
+    let clueUnlocked = false; // Flag para saber si ya se mostró la pista en esta partida
 
     function startGame() {
         if (isGameRunning) return;
@@ -108,7 +242,10 @@ document.addEventListener('DOMContentLoaded', () => {
         bird.velocity = 0;
         pipes = [];
         frameCount = 0;
+        clueUnlocked = false; // Resetear flag
         startGameBtn.textContent = "Reiniciar";
+        cardBack.classList.remove('reveal-clue'); // Asegurar que se ve el juego
+        resetBoosterCards();
 
         if (gameInterval) clearInterval(gameInterval);
         gameInterval = setInterval(gameLoop, 1000 / 60); // 60 FPS
@@ -120,12 +257,36 @@ document.addEventListener('DOMContentLoaded', () => {
         startGameBtn.textContent = "Empezar";
     }
 
+    function revealClue() {
+        console.log("revealClue called - Executing visual changes");
+        stopGame();
+        const cb = document.querySelector('.card-back');
+        cb.classList.add('reveal-clue');
+
+        // Forzar estilos por si el CSS falla
+        const gameLayer = document.getElementById('game-layer');
+        const clueLayer = document.getElementById('clue-layer');
+
+        if (gameLayer) {
+            gameLayer.style.opacity = '0';
+            gameLayer.style.pointerEvents = 'none';
+        }
+
+        if (clueLayer) {
+            clueLayer.style.opacity = '1';
+            clueLayer.style.zIndex = '10';
+            clueLayer.style.pointerEvents = 'auto';
+            clueLayer.style.transform = 'scale(1)';
+        }
+    }
+
     startGameBtn.addEventListener('click', startGame);
 
     // Controles (Click y Touch)
     function jump() {
         if (!isGameRunning) return;
         bird.velocity = bird.jump;
+        sounds.jump(); // Sonido de salto
     }
 
     canvas.addEventListener('mousedown', (e) => {
@@ -193,6 +354,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 score++;
                 scoreElement.textContent = score;
                 pipes[i].passed = true;
+                sounds.score(); // Sonido de punto
+                console.log("Puntuación actual:", score);
+
+                // DESBLOQUEAR PISTA AL LLEGAR A 1 (o 10)
+                if (score === 10 && !clueUnlocked) {
+                    console.log("¡Puntuación objetivo alcanzada! Revelando pista...");
+                    clueUnlocked = true;
+                    revealClue();
+                    return; // Detener loop
+                }
             }
         }
 
@@ -209,10 +380,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function draw() {
         // Limpiar canvas completamente antes de dibujar
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Fondo (opcional, si quieres que tenga un color específico, si no transparente)
-        // ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-        // ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         // Pájaro (Regalo)
         ctx.fillStyle = '#d32f2f'; // Rojo regalo
@@ -242,6 +409,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function gameOver() {
         stopGame();
+        sounds.crash(); // Sonido de choque
         // Dibujar texto Game Over
         ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);

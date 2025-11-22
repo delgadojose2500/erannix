@@ -29,14 +29,62 @@
 
                 <!-- Cara Trasera: Juego Flappy Gift -->
                 <div class="card-back">
-                    <h2>Flappy Gift</h2>
-                    <div class="score-board">Puntuación: <span id="score">0</span></div>
-                    <canvas id="game-board" width="300" height="400"></canvas>
-                    <div class="controls">
-                        <button id="start-game-btn" class="game-btn small">Empezar</button>
-                        <button id="back-btn" class="game-btn small outline">Volver</button>
+                    <!-- Capa de la Pista (Oculta detrás) -->
+                    <div id="clue-layer" class="clue-layer">
+                        <h3 class="pick-title">¡Elige una carta!</h3>
+                        <div class="cards-container">
+                            <!-- Carta 1 -->
+                            <div class="booster-card" onclick="flipCard(this)">
+                                <div class="booster-card-inner">
+                                    <div class="booster-card-front">
+                                        <span>?</span>
+                                    </div>
+                                    <div class="booster-card-back">
+                                        <p class="clue-text-card">"Los mejores regalos comienzan con una pequeña pieza"
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Carta 2 -->
+                            <div class="booster-card" onclick="flipCard(this)">
+                                <div class="booster-card-inner">
+                                    <div class="booster-card-front">
+                                        <span>?</span>
+                                    </div>
+                                    <div class="booster-card-back">
+                                        <p class="clue-text-card">"Los mejores regalos comienzan con una pequeña pieza"
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Carta 3 -->
+                            <div class="booster-card" onclick="flipCard(this)">
+                                <div class="booster-card-inner">
+                                    <div class="booster-card-front">
+                                        <span>?</span>
+                                    </div>
+                                    <div class="booster-card-back">
+                                        <p class="clue-text-card">"Los mejores regalos comienzan con una pequeña pieza"
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button id="continue-btn" class="game-btn small"
+                            style="opacity: 0; pointer-events: none;">Seguir Jugando</button>
                     </div>
-                    <p class="instructions">Toca para saltar</p>
+
+                    <!-- Capa del Juego (Frente) -->
+                    <div id="game-layer" class="game-layer">
+                        <h2>Flappy Gift</h2>
+                        <div class="score-board">Puntuación: <span id="score">0</span></div>
+                        <canvas id="game-board" width="300" height="400"></canvas>
+                        <div class="controls">
+                            <button id="start-game-btn" class="game-btn small">Empezar</button>
+                            <button id="back-btn" class="game-btn small outline">Volver</button>
+                        </div>
+                        <p class="instructions">Toca para saltar • Consigue 10 puntos para una pista</p>
+                    </div>
                 </div>
             </div>
         </div>
