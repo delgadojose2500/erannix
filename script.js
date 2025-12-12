@@ -149,9 +149,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Voltear tarjeta
     // --- Configuración del Juego ---
     // CAMBIA ESTO A TRUE PARA DESBLOQUEAR EL JUEGO
-    const isGameUnlocked = true;
+    const isGameUnlocked = false;
     // PUNTOS NECESARIOS PARA DESBLOQUEAR LA PISTA
-    const POINTS_TO_UNLOCK = 1;
+    const POINTS_TO_UNLOCK = 50;
 
     // Actualizar texto de instrucciones con los puntos necesarios
     const instructionsElement = document.querySelector('.instructions');
