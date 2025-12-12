@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Configuración: Fecha y hora objetivo (Año, Mes (0-11), Día, Hora, Minuto, Segundo)
     // Nota: Los meses en JavaScript van de 0 (Enero) a 11 (Diciembre)
     // Ejemplo: Para el 31 de Diciembre de 2025 a las 23:59:59
-    const targetDate = new Date(2026, 0, 6, 0, 0, 0).getTime();
+    const targetDate = new Date(2026, 0, 6, 20, 0, 0).getTime();
 
     // Rutas de las imágenes
     const activeImage = 'active.png';
@@ -144,9 +144,53 @@ document.addEventListener('DOMContentLoaded', () => {
     const canvas = document.getElementById('game-board');
     const ctx = canvas.getContext('2d');
     const scoreElement = document.getElementById('score');
+    const unlockMessage = document.getElementById('unlock-message');
 
     // Voltear tarjeta
+    // --- Configuración del Juego ---
+    // CAMBIA ESTO A TRUE PARA DESBLOQUEAR EL JUEGO
+    const isGameUnlocked = true;
+    // PUNTOS NECESARIOS PARA DESBLOQUEAR LA PISTA
+    const POINTS_TO_UNLOCK = 1;
+
+    // Actualizar texto de instrucciones con los puntos necesarios
+    const instructionsElement = document.querySelector('.instructions');
+    if (instructionsElement) {
+        instructionsElement.textContent = `Toca para saltar • Consigue ${POINTS_TO_UNLOCK} puntos para una pista`;
+    }
+
+    // Voltear tarjeta
+    function updatePlayButtonState() {
+        if (isGameUnlocked) {
+            playBtn.classList.remove('locked');
+            playBtn.innerHTML = '🎁 Jugar Flappy Gift';
+            if (unlockMessage) unlockMessage.style.display = 'block';
+        } else {
+            playBtn.classList.add('locked');
+            playBtn.innerHTML = `
+                <svg class="lock-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M12 17a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm6-9h-1V6a5 5 0 0 0-10 0v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2zM9 6a3 3 0 1 1 6 0v2H9V6z"/>
+                </svg>
+                Pista Bloqueada
+            `;
+            if (unlockMessage) unlockMessage.style.display = 'none';
+        }
+    }
+
+
+
+    // Inicializar estado del botón
+    updatePlayButtonState();
+
     playBtn.addEventListener('click', () => {
+        if (!isGameUnlocked) {
+            // Opcional: Animación de "negación" o sonido
+            playBtn.style.transform = 'translateX(5px)';
+            setTimeout(() => playBtn.style.transform = 'translateX(-5px)', 100);
+            setTimeout(() => playBtn.style.transform = 'none', 200);
+            return;
+        }
+
         card.classList.add('flipped');
         if (audioCtx.state === 'suspended') audioCtx.resume(); // Inicializar audio
     });
@@ -357,8 +401,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 sounds.score(); // Sonido de punto
                 console.log("Puntuación actual:", score);
 
-                // DESBLOQUEAR PISTA AL LLEGAR A 1 (o 10)
-                if (score === 10 && !clueUnlocked) {
+                // DESBLOQUEAR PISTA AL LLEGAR A LA PUNTUACIÓN OBJETIVO
+                if (score === POINTS_TO_UNLOCK && !clueUnlocked) {
                     console.log("¡Puntuación objetivo alcanzada! Revelando pista...");
                     clueUnlocked = true;
                     revealClue();

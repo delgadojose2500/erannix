@@ -1,4 +1,4 @@
-:root {
+﻿:root {
     --bg-color: #f1f8e9;
     --bg-gradient: linear-gradient(135deg, #f1f8e9 0%, #dcedc8 100%);
     --card-bg: rgba(255, 255, 255, 0.25);
@@ -165,8 +165,8 @@ body {
 }
 
 .booster-card {
-    width: 80px;
-    height: 120px;
+    width: 110px;
+    height: 160px;
     position: relative;
     cursor: pointer;
     transition: transform 0.3s ease;
@@ -241,6 +241,16 @@ body {
     border: 2px solid var(--accent-color);
     font-size: 0.7rem;
     line-height: 1.2;
+    overflow-y: auto;
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE/Edge */
+}
+
+.booster-card-back::-webkit-scrollbar {
+    display: none;
+    /* Chrome/Safari */
 }
 
 .clue-text-card {
@@ -261,7 +271,7 @@ body {
 }
 
 .image-container {
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
     position: relative;
     border-radius: 16px;
     transition: box-shadow 0.3s ease;
@@ -273,6 +283,9 @@ body {
     display: block;
     transition: transform 0.5s ease;
     border-radius: 16px;
+    /* Limit image height to prevent pushing content */
+    max-height: 220px;
+    object-fit: contain;
 }
 
 /* Change hover effect to only trigger when hovering the image container */
@@ -281,7 +294,7 @@ body {
 }
 
 .timer-container h1 {
-    font-size: 4rem;
+    font-size: 3.5rem;
     font-weight: 700;
     letter-spacing: 2px;
     margin-bottom: 0.5rem;
@@ -303,7 +316,7 @@ body {
 }
 
 .game-btn {
-    margin-top: 1rem;
+    margin-top: 0.5rem;
     padding: 0.5rem 1rem;
     font-family: var(--font-main);
     font-size: 0.9rem;
@@ -424,4 +437,49 @@ body {
     100% {
         background-position: 0% 50%;
     }
+}
+
+/* Estado bloqueado para el botón de jugar */
+.game-btn.locked {
+    cursor: not-allowed;
+    opacity: 0.6;
+    background: rgba(100, 100, 100, 0.1);
+    border-color: transparent;
+    filter: grayscale(100%);
+    margin-top: 2rem;
+}
+
+.game-btn.locked:hover {
+    transform: none;
+    background: rgba(100, 100, 100, 0.1);
+    box-shadow: none;
+}
+
+.lock-icon {
+    width: 1em;
+    height: 1em;
+    margin-right: 0.5rem;
+    vertical-align: text-bottom;
+    fill: currentColor;
+}
+
+
+.unlock-message {
+    font-size: 0.9rem;
+    color: var(--accent-color);
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    font-style: italic;
+    opacity: 0.9;
+    text-align: center;
+    max-width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.4;
+    padding: 0 1rem;
+}
+
+/* Ajustar margen del botón cuando está desbloqueado */
+.game-btn:not(.locked) {
+    margin-top: 0;
 }
