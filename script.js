@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Configuración: Fecha y hora objetivo (Año, Mes (0-11), Día, Hora, Minuto, Segundo)
     // Nota: Los meses en JavaScript van de 0 (Enero) a 11 (Diciembre)
     // Ejemplo: Para el 31 de Diciembre de 2025 a las 23:59:59
-    const targetDate = new Date(2026, 0, 6, 20, 0, 0).getTime();
+    const targetDate = new Date(2026, 0, 5, 20, 0, 0).getTime();
 
     // Rutas de las imágenes
     const activeImage = 'active.png';
@@ -464,3 +464,4 @@ document.addEventListener('DOMContentLoaded', () => {
         startGameBtn.textContent = "Reintentar";
     }
 });
+
